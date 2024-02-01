@@ -36,7 +36,14 @@ uses
   UfrmFilFin in 'UfrmFilFin.pas' {frmFilFin},
   UfrmFinRel in 'UfrmFinRel.pas' {frmFinRel},
   UfrmVndGrpRel in 'UfrmVndGrpRel.pas' {frmVndGrpRel},
-  UfrmFinGrpRel in 'UfrmFinGrpRel.pas' {frmFinGrpRel};
+  UfrmFinGrpRel in 'UfrmFinGrpRel.pas' {frmFinGrpRel},
+  Teste in 'Teste.pas' {frmTeste},
+  UfrmEmpManager in 'UfrmEmpManager.pas' {frmEmpManager},
+  UfrmEmpRegister in 'UfrmEmpRegister.pas' {frmEmpRegister},
+  UfrmConBancManager in 'UfrmConBancManager.pas' {frmConBancManager},
+  UfrmConBancRegister in 'UfrmConBancRegister.pas' {frmConBancRegister},
+  UfrmImpBol in 'UfrmImpBol.pas' {frmImpBol},
+  UfrmBol in 'UfrmBol.pas' {frmBol};
 
 {$R *.res}
 

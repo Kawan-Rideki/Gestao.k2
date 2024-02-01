@@ -100,6 +100,15 @@ inherited frmVndRegister: TfrmVndRegister
       TabOrder = 6
       OnClick = btnDelProdClick
     end
+    object Edit1: TEdit
+      Left = 700
+      Top = -6
+      Width = 97
+      Height = 23
+      TabOrder = 7
+      Text = 'edtIdCli'
+      Visible = False
+    end
   end
   object Panel3: TPanel [2]
     Left = 0

@@ -40,6 +40,7 @@ type
     Panel5: TPanel;
     DBGrid1: TDBGrid;
     btnDelProd: TButton;
+    Edit1: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure edtIdCliExit(Sender: TObject);
     procedure btnNewClick(Sender: TObject);
@@ -246,8 +247,10 @@ begin
   cdsItem.CreateDataSet;
   cdsItem.LogChanges := False;
 
-  TableName := 'tb_vnd';
+  TableName   := 'tb_vnd';
   IdFieldname := 'id_vnd';
+  CodEmp      := True;
+
 
   AddMapping(TNumericFieldExtender.Create('id_vnd', edtIdVnd, 0));
   AddMapping(TDateFieldExtender.Create('dt_vnd', edtDtVnd));

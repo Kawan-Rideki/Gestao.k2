@@ -8,10 +8,10 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Grids, Vcl.DBGrids, UAppLibrary, Vcl.ComCtrls, Datasnap.DBClient, System.Generics.Collections;
+  Vcl.Grids, Vcl.DBGrids, UAppLibrary, Vcl.ComCtrls, Datasnap.DBClient, System.Generics.Collections, UfrmDefault, RLReport, RLConsts, RLParser;
 
 type
-  TfrmFilFin = class(TForm)
+  TfrmFilFin = class(TfrmDefault)
     Label3: TLabel;
     Label4: TLabel;
     Label1: TLabel;
@@ -28,6 +28,7 @@ type
     cboTpDt: TComboBox;
     RadioButton1: TRadioButton;
     RadioButton2: TRadioButton;
+    dsItem: TDataSource;
     procedure btnPesqCliClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure edtIdCliExit(Sender: TObject);
@@ -91,23 +92,82 @@ procedure TfrmFilFin.Button1Click(Sender: TObject);
 var
   VlRct: Double;
   VlDesp: Double;
+  RelFin: TRLReport;
+  BandHeader1: TRLBand;
+  BandHeader2: TRLBand;
+  BandHeader3: TRLBand;
+  BandDetail: TRLBand;
+  BandFooter1: TRLBand;
+  BandSummary: TRLBand;
+  BandFooter2: TRLBand;
+  Group: TRLGroup;
 begin
   if (RadioButton1.Checked = True) then
   begin
-    frmFinRel                  := TfrmFinRel.Create( self );
+    qItem.Connection := frmMain.FDConnection1;
+    dsItem.DataSet  := qItem;
+    RelFin          := Report(dsItem);
+
+    InfRel;
+
+    BandHeader1 := RLBand(RelFin, btHeader, 19, True, false);
+
+    RLLabel(BandHeader1, 16, 3, -13, 'Relatório Gerado em:');
+    RLSYStemInfo(BandHeader1, 149, 3, itNow);
+
     if (edtNomeCli.Text = '') then
     begin
-      frmFinRel.RLLabel10.Caption := '';
-      frmFinRel.RLLabel9.Caption  := '';
+      RLLabel(BandHeader1, 463, 3, -13, '');
+      RLLabel(BandHeader1, 511, 3, -13, '');
     end
     else
     begin
-      frmFinRel.RLLabel10.Caption := edtNomeCli.Text;
+      RLLabel(BandHeader1, 463, 3, -13, 'Cliente:');
+      RLLabel(BandHeader1, 511, 3, -13, edtNomeCli.Text);
     end;
-    qItem.Connection := frmMain.FDConnection1;
-    frmFinRel.dsItem.DataSet := qItem;
-    frmFinRel.RelFin.DataSource := frmFinRel.dsItem;
-    InfRel;
+
+    BandHeader2 := RLBand(RelFin, btHeader, 39, True, false);
+
+    RLLabel(BandHeader2, 241, 6, 26, 'Relatório Financeiro');
+
+    if (frmFilFin.CheckBox1.Checked = True) then
+    begin
+      RLLabel(BandHeader2, 275, 32, -13, DateToStr(DateTimePicker1.Date) + ' até ' + DateToStr(DateTimePicker2.Date));
+    end
+    else
+    begin
+      RLLabel(BandHeader2, 275, 32, -13, '');
+    end;
+
+    BandHeader3 := RLBand(RelFin, btHeader, 24, True, false);
+
+    RLLabel(BandHeader3, 3, 5, -13, 'Cliente');
+    RLLabel(BandHeader3, 93, 5, -13, 'Código');
+    RLLabel(BandHeader3, 149, 5, -13, 'Dt. de Emis.');
+    RLLabel(BandHeader3, 236, 5, -13, 'Dt. de Venc.');
+    RLLabel(BandHeader3, 329, 5, -13, 'Vl. Rec.');
+    RLLabel(BandHeader3, 395, 5, -13, 'Vl. Des.');
+    RLLabel(BandHeader3, 463, 5, -13, 'Descrição');
+    RLLabel(BandHeader3, 546, 5, -13, 'Op. Fin.');
+    RLLabel(BandHeader3, 615, 5, -13, 'Num. Doc.');
+
+    BandDetail := RLBand(RelFin, btDetail, 24, False, False);
+
+    RLDBText(BandDetail, 3, 5, dsItem, 'id_Cli');
+    RLDBText(BandDetail, 43, 5, dsItem, 'nome');
+    RLDBText(BandDetail, 93, 5, dsItem, 'id_fin');
+    RLDBText(BandDetail, 149, 5, dsItem, 'dt_ems');
+    RLDBText(BandDetail, 236, 5, dsItem, 'dt_vnc');
+    RLDBText(BandDetail, 329, 5, dsItem, 'vl_rec');
+    RLDBText(BandDetail, 395, 5, dsItem, 'vl_des');
+    RLDBText(BandDetail, 463, 5, dsItem, 'descr');
+    RLDBText(BandDetail, 546, 5, dsItem, 'op_fin');
+    RLDBText(BandDetail, 615, 5, dsItem, 'Num_doc');
+
+    BandDetail.BeforePrint := RLBandBeforePrint;
+
+    BandFooter1 := RLBand(RelFin, btFooter, 24, False, True);
+
     VlRct   := 0;
     VlDesp  := 0;
 
@@ -125,18 +185,110 @@ begin
 
       qItem.Next;
     end;
-    frmFinRel.RLLabel14.caption := formatfloat('R$ ###,###,###,##0.00',VlRct);
-    frmFinRel.RLLabel15.caption := formatfloat('R$ ###,###,###,##0.00', VlDesp);
-    frmFinRel.RelFin.Preview();
+
+    RLLabel(BandFooter1, 16, 6, -13, 'Total Rec.:');
+    RLLabel(BandFooter1, 79, 6, -13, formatfloat('R$ ###,###,###,##0.00',VlRct));
+
+    RLLabel(BandFooter1, 530, 6, -13, 'Total Des.:');
+    RLLabel(BandFooter1, 593, 6, -13, formatfloat('R$ ###,###,###,##0.00', VlDesp));
+
+
+    RelFin.Preview();
+
   end
   else if (RadioButton2.Checked = True) then
   begin
-    frmFinGrpRel                  := TfrmFinGrpRel.Create( self );
     qItem.Connection := frmMain.FDConnection1;
-    frmFinGrpRel.dsItem.DataSet   := qItem;
-    frmFinGrpRel.RelFin.DataSource := frmFinGrpRel.dsItem;
+    dsItem.DataSet  := qItem;
+    RelFin          := Report(dsItem);
+
     InfRel;
-    frmFinGrpRel.RelFin.Preview();
+
+    BandHeader1 := RLBand(RelFin, btHeader, 19, True, false);
+
+    RLLabel(BandHeader1, 16, 3, -13, 'Relatório Gerado em:');
+    RLSYStemInfo(BandHeader1, 149, 3, itNow);
+
+    BandHeader2 := RLBand(RelFin, btHeader, 39, True, false);
+
+    RLLabel(BandHeader2, 241, 6, 26, 'Relatório Financeiro');
+
+    if (frmFilFin.CheckBox1.Checked = True) then
+    begin
+      RLLabel(BandHeader2, 275, 32, -13, DateToStr(DateTimePicker1.Date) + ' até ' + DateToStr(DateTimePicker2.Date));
+    end
+    else
+    begin
+      RLLabel(BandHeader2, 275, 32, -13, '');
+    end;
+
+    Group := RLGroup(RelFin, 152, False, 'id_cli');
+
+    BandHeader3 := RLBand(Group, btHeader, 50, True, True);
+
+    RLLabel(BandHeader3, 3, 5, -13, 'Cliente:');
+    RLDBText(BandHeader3, 65, 5, dsItem, 'id_Cli');
+    RLDBText(BandHeader3, 131, 5, dsItem, 'nome');
+
+    RLLabel(BandHeader3, 3, 30, -13, 'Código');
+    RLLabel(BandHeader3, 67, 30, -13, 'Dt. de Emis.');
+    RLLabel(BandHeader3, 149, 30, -13, 'Dt. de Venc.');
+    RLLabel(BandHeader3, 234, 30, -13, 'Vl. Rec.');
+    RLLabel(BandHeader3, 307, 30, -13, 'Vl. Des.');
+    RLLabel(BandHeader3, 379, 30, -13, 'Descrição');
+    RLLabel(BandHeader3, 457, 30, -13, 'Op. Fin.');
+    RLLabel(BandHeader3, 582, 30, -13, 'Num. Doc.');
+
+    BandDetail := RlBand(Group, btDetail, 25, False, False);
+
+    RLDBText(BandDetail, 3, 5, dsItem, 'id_fin');
+    RLDBText(BandDetail, 67, 5, dsItem, 'dt_ems');
+    RLDBText(BandDetail, 149, 5, dsItem, 'dt_vnc');
+    RLDBText(BandDetail, 234, 5, dsItem, 'vl_rec');
+    RLDBText(BandDetail, 307, 5, dsItem, 'vl_des');
+    RLDBText(BandDetail, 379, 5, dsItem, 'descr');
+    RLDBText(BandDetail, 457, 5, dsItem, 'op_fin');
+    RLDBText(BandDetail, 582, 5, dsItem, 'num_doc');
+
+    BandDetail.BeforePrint := RLBandBeforePrint;
+
+    BandFooter1 := RlBand(Group, btFooter, 16, false, false);
+
+    BandSummary := RlBand(Group, btSummary, 38, false, false);
+
+    VlRct   := 0;
+    VlDesp  := 0;
+
+    qItem.First;
+    while not qItem.Eof do
+    begin
+      if (qItem.FieldByName('op').AsString = 'Receita') then
+      begin
+        VlRct := VlRct + qItem.FieldByName('vl_pg').AsFloat;
+      end
+      else if (qItem.FieldByName('op').AsString = 'Despesa') then
+      begin
+        VlDesp := VlDesp + qItem.FieldByName('vl_pg').AsFloat;
+      end;
+
+      qItem.Next;
+    end;
+
+    RLLabel(BandSummary, 3, 6, -13, 'Subtotal Rec.:');
+    RLDBResult(BandSummary, 90, 6, dsItem, '', riSimple, 'R$ ###,###,###,##0.00', 'sum(vl_rec)');
+
+    RLLabel(BandSummary, 510, 6, -13, 'Subtotal Des.:');
+    RLDBResult(BandSummary, 603, 6, dsItem, '', riSimple, 'R$ ###,###,###,##0.00', 'sum(vl_des)');
+
+    BandFooter2 := RlBand(RelFin, btFooter, 33, false, false);
+    RLLabel(BandFooter2, 3, 6, -13, 'Total Rec.:');
+    RLLabel(BandFooter2, 75, 6, -13, formatfloat('R$ ###,###,###,##0.00',VlRct));
+
+    RLLabel(BandFooter2, 530, 6, -13, 'Total Des.:');
+    RLLabel(BandFooter2, 593, 6, -13, formatfloat('R$ ###,###,###,##0.00', VlDesp));
+
+    RelFin.Preview();
+
   end;
 end;
 
@@ -194,7 +346,7 @@ end;
 
 procedure TfrmFilFin.FormShow(Sender: TObject);
 begin
-  //  if (Mapping.Items[IdFieldName].Control is TEdit) then
+//  if (Mapping.Items[IdFieldName].Control is TEdit) then
 //  begin
 //    TEdit(Mapping.Items[IdFieldName].Control).OnExit := IdOnExit;
 //  end;

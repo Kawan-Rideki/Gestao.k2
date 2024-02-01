@@ -236,6 +236,34 @@
             <Form>frmFinGrpRel</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Teste.pas">
+            <Form>frmTeste</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmEmpManager.pas">
+            <Form>frmEmpManager</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmEmpRegister.pas">
+            <Form>frmEmpRegister</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmConBancManager.pas">
+            <Form>frmConBancManager</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmConBancRegister.pas">
+            <Form>frmConBancRegister</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmImpBol.pas">
+            <Form>frmImpBol</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="UfrmBol.pas">
+            <Form>frmBol</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

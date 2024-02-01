@@ -28,6 +28,7 @@ type
     Mapping: TDictionary<String, TFieldExtender>;
     TableName: String;
     IdFieldname: String;
+    CodEmp: Boolean;
     procedure AddMapping(AFieldExtender: TFieldExtender);
     procedure IdOnExit(ASender: TObject);
     procedure AfterSave; virtual;
@@ -99,7 +100,7 @@ begin
 
   if (qItem.IsEmpty) then
   begin
-   qItem.Append;
+    qItem.Append;
   end
   else
   begin
@@ -118,6 +119,12 @@ begin
     end;
 
   end;
+
+  if (CodEmp = True) then
+  begin
+    qitem.fieldbyname('id_emp').AsInteger := frmMain.IdEmp;
+  end;
+
   qItem.Post;
 
   Mapping.Items[idFieldName].SetValue(qItem.FieldByName(IdFieldName).Value);

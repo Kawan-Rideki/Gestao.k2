@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, Data.DB;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, Data.DB, RLParser;
 
 type
   TfrmFinRel = class(TForm)
@@ -41,6 +41,7 @@ type
     RLDBText10: TRLDBText;
     RLLabel14: TRLLabel;
     RLLabel15: TRLLabel;
+    RLExpressionParser1: TRLExpressionParser;
     procedure RLBand3BeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }

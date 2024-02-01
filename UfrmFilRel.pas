@@ -8,10 +8,10 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   Data.DB, FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Grids, Vcl.DBGrids, UAppLibrary, Vcl.ComCtrls, Datasnap.DBClient, System.Generics.Collections;
+  Vcl.Grids, Vcl.DBGrids, UAppLibrary, Vcl.ComCtrls, Datasnap.DBClient, System.Generics.Collections, UfrmDefault, RLParser, RLReport, RLConsts;
 
 type
-  TfrmFilRel = class(TForm)
+  TfrmFilRel = class(TfrmDefault)
     Label3: TLabel;
     Label4: TLabel;
     Label1: TLabel;
@@ -27,6 +27,7 @@ type
     qCli: TFDQuery;
     RadioButton1: TRadioButton;
     RadioButton2: TRadioButton;
+    dsItem: TDataSource;
     procedure btnPesqCliClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -86,17 +87,59 @@ begin
 end;
 
 procedure TfrmFilRel.Button1Click(Sender: TObject);
+var
+  RelVnd: TRLReport;
+  BandHeader1: TRLBand;
+  BandHeader2: TRLBand;
+  BandHeader3: TRLBand;
+  BandDetail: TRLBand;
+  BandFooter: TRLBand;
 begin
-  frmVndRel                  := TfrmVndRel.Create( self );
+  qItem.Connection := frmMain.FDConnection1;
+  dsItem.DataSet := qItem;
+  RelVnd     := Report(dsItem);
+
+  InfRel;
+
+  BandHeader1 := RLBand(RelVnd, btHeader, 19, True, false);
+
+  RLLabel(BandHeader1, 16, 3, -13, 'Relatório Gerado em:');
+  RLSYStemInfo(BandHeader1, 149, 3, itNow);
+
+  BandHeader2 := RLBand(RelVnd, btHeader, 50, True, false);
+
+  RLLabel(BandHeader2, 241, 6, 26, 'Relatório de Venda');
+
   if (frmFilRel.CheckBox1.Checked = True) then
   begin
-    frmVndRel.RLLabel8.Caption := DateToStr(DateTimePicker1.Date) + ' até ' + DateToStr(DateTimePicker2.Date);
+    RLLabel(BandHeader2, 275, 32, -13, DateToStr(DateTimePicker1.Date) + ' até ' + DateToStr(DateTimePicker2.Date));
   end;
-  qItem.Connection := frmMain.FDConnection1;
-  frmVndRel.dsItem.DataSet := qItem;
-  frmVndRel.RelVnd.DataSource := frmVndRel.dsItem;
-  InfRel;
-  frmVndRel.RelVnd.Preview();
+
+  BandHeader3 := RLBand(RelVnd, btHeader, 32, True, false);
+
+  RLLabel(BandHeader3, 37, 10, -13, 'Cód. de Venda');
+  RLLabel(BandHeader3, 173, 10, -13, 'Nome');
+  RLLabel(BandHeader3, 315, 10, -13, 'Cód. do Cliente');
+  RLLabel(BandHeader3, 463, 10, -13, 'Data');
+  RLLabel(BandHeader3, 567, 10, -13, 'Quant. de Venda');
+
+  BandDetail := RLBand(RelVnd, btDetail, 24, False, False);
+
+  RLDBText(BandDetail, 37, 10, dsItem, 'id_vnd');
+  RLDBText(BandDetail, 173, 10, dsItem, 'nome');
+  RLDBText(BandDetail, 315, 10, dsItem, 'id_cli');
+  RLDBText(BandDetail, 463, 10, dsItem, 'dt_vnd');
+  RLDBText(BandDetail, 567, 10, dsItem, 'vl_qtd');
+
+  BandDetail.BeforePrint := RLBandBeforePrint;
+
+  BandFooter := RLBand(RelVnd, btFooter, 24, False, True);
+
+  RLLabel(BandFooter, 16, 6, -13, 'Total de Vendas:');
+  RLDBResult(BandFooter, 126, 6, dsItem, 'vl_qtd', riSum, '', '');
+
+
+  RelVnd.Preview();
 end;
 
 

@@ -41,11 +41,11 @@ type
     RLLabel10: TRLLabel;
     RLLabel14: TRLLabel;
     RLLabel15: TRLLabel;
-    RLBand6: TRLBand;
     RLLabel3: TRLLabel;
     RLLabel11: TRLLabel;
     RLDBResult3: TRLDBResult;
     RLDBResult4: TRLDBResult;
+    RLBand6: TRLBand;
     procedure RLBand3BeforePrint(Sender: TObject; var PrintIt: Boolean);
   private
     { Private declarations }

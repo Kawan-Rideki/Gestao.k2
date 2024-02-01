@@ -52,6 +52,8 @@ begin
   dsItem.DataSet := qItem;
   RelCli.DataSource := dsItem;
 
+
+
   with qItem do
   begin
     Close;

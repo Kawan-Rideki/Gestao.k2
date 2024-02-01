@@ -8,7 +8,7 @@ uses
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
   FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
   FireDAC.Comp.DataSet, FireDAC.Comp.Client, Vcl.Grids, Vcl.DBGrids,
-  Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls;
+  Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, RLReport, RLConsts, RLParser;
 
 type
   TfrmVndManager = class(TfrmManager)
@@ -48,33 +48,80 @@ begin
     Add('     tb_vnd.id_cli = tb_cli.id_cli');
     Add('where');
     Add('     unaccent(tb_cli.nome) ilike unaccent(:nome)');
+    Add('     and id_emp = :id_emp');
     Add('order by');
     Add('     tb_vnd.dt_vnd,');
     Add('     tb_vnd.id_vnd');
   end;
   qItem.ParamByName('nome').AsString := '%' + edtPesq.Text + '%';
+  qItem.ParamByName('id_emp').AsInteger := frmMain.IdEmp;
   qItem.Open;
 end;
 
 
 procedure TfrmVndManager.Button1Click(Sender: TObject);
 begin
-  inherited;
   Application.CreateForm(TfrmFilRel, frmFilRel);
 end;
 
 procedure TfrmVndManager.Button2Click(Sender: TObject);
+var
+  RelCli: TRLReport;
+  BandHeader1: TRLBand;
+  BandHeader2: TRLBand;
+  BandHeader3: TRLBand;
+  BandDetail: TRLBand;
+  BandFooter: TRLBand;
 begin
-  inherited;
   if not (qItem.IsEmpty) then
   begin
-    frmVndItemRel                  := TfrmVndItemRel.Create( self );
     qVnd.Connection := frmMain.FDConnection1;
-    frmVndItemRel.dsItem.DataSet := qVnd;
-    frmVndItemRel.RelVnd.DataSource := frmVndItemRel.dsItem;
+    dsItem.DataSet  := qVnd;
+    RelCli          := Report(dsItem);
+
+    BandHeader1 := RLBand(RelCli, btHeader, 19, True, false);
+
+    RLLabel(BandHeader1, 16, 3, -13, 'Relatório Gerado em:');
+    RLSYStemInfo(BandHeader1, 149, 3, itNow);
+
+    BandHeader2 := RLBand(RelCli, btHeader, 39, True, false);
+
+    RLLabel(BandHeader2, 241, 6, 26, 'Comprovante de Vendas');
+
+    BandHeader3 := RLBand(RelCli, btHeader, 112, True, false);
+
+    RLLabel(BandHeader3, 37, 10, -13, 'Cód. de venda:');
+    RLLabel(BandHeader3, 37, 34, -13, 'Cód. de Cliente:');
+    RLLabel(BandHeader3, 551, 10, -13, 'Nome:');
+    RLLabel(BandHeader3, 551, 34, -13, 'Data:');
+
+    RLDBText(BandHeader3, 128, 10, dsItem, 'id_vnd');
+    RLDBText(BandHeader3, 128, 34, dsItem, 'id_cli');
+    RLDBText(BandHeader3, 590, 10, dsItem, 'nome');
+    RLDBText(BandHeader3, 585, 34, dsItem, 'dt_vnd');
+
+    RLLabel(BandHeader3, 37, 90, -13, 'Descrição');
+    RLLabel(BandHeader3, 213, 90, -13, 'Quantidade');
+    RLLabel(BandHeader3, 383, 90, -13, 'Preço Unt.');
+    RLLabel(BandHeader3, 551, 90, -13, 'Preço Tot.');
+
+    BandDetail := RLBand(RelCli, btDetail, 24, False, False);
+
+    RLDBText(BandDetail, 37, 6, dsItem, 'descr');
+    RLDBText(BandDetail, 213, 6, dsItem, 'vl_qtd');
+    RLDBText(BandDetail, 383, 6, dsItem, 'vl_unt');
+    RLDBText(BandDetail, 551, 6, dsItem, 'tot');
+
+    BandDetail.BeforePrint := RLBandBeforePrint;
+
+    BandFooter := RLBand(RelCli, btFooter, 24, False, True);
+
+    RLLabel(BandFooter, 16, 6, -13, 'Total da Venda:');
+    RLDBResult(BandFooter, 126, 6, dsItem, '', riSimple, 'R$ ###,###,###,##0.00', 'sum(tot)');
+
     InfRel;
-    frmVndItemRel.RLLabel11.Caption := qItem.FieldByName('vl_tot').AsString;
-    frmVndItemRel.RelVnd.Preview();
+
+    RelCli.Preview();
   end
   else
   begin
@@ -88,7 +135,7 @@ begin
 
   RegisterClass := TfrmVndRegister;
   TableName     := 'tb_vnd';
-  FindFieldName := 'dt_vnd';
+  FindFieldName := 'id_vnd';
 
   AddColumn('id_vnd', 'Código', 100);
   AddColumn('dt_vnd', 'Data', 100);

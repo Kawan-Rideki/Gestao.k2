@@ -54,7 +54,7 @@ procedure TfrmManager.AddColumn(AName, ADescription: String; AWidth: Integer);
 begin
   with dbgItem.Columns.Add do
   begin
-    FieldName          := AName;
+    FieldName     := AName;
     Title.Caption := ADescription;
     Width         := AWidth;
   end;

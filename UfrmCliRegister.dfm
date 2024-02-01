@@ -68,7 +68,7 @@ inherited frmCliRegister: TfrmCliRegister
   object edtNome: TEdit [10]
     Left = 143
     Top = 64
-    Width = 306
+    Width = 274
     Height = 23
     TabOrder = 2
     Text = 'Edit1'
@@ -123,9 +123,9 @@ inherited frmCliRegister: TfrmCliRegister
   end
   object btnBuscarCep: TButton [17]
     Left = 143
-    Top = 175
+    Top = 176
     Width = 75
-    Height = 25
+    Height = 23
     Caption = 'Buscar'
     TabOrder = 9
     OnClick = btnBuscarCepClick

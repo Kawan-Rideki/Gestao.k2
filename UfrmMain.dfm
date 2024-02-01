@@ -1,9 +1,9 @@
 object frmMain: TfrmMain
-  Left = 0
-  Top = 0
+  Left = 674
+  Top = 312
   Caption = 'Gest'#227'o K'
-  ClientHeight = 493
-  ClientWidth = 681
+  ClientHeight = 442
+  ClientWidth = 758
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -12,17 +12,32 @@ object frmMain: TfrmMain
   Font.Style = []
   FormStyle = fsMDIForm
   Menu = MainMenu1
+  Position = poDesigned
   WindowState = wsMaximized
   OnCreate = FormCreate
+  OnShow = FormShow
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
-    Top = 452
-    Width = 681
+    Top = 401
+    Width = 758
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    object Label1: TLabel
+      Left = 288
+      Top = 16
+      Width = 147
+      Height = 15
+      Caption = 'Atualmente como empresa:'
+    end
+    object Label2: TLabel
+      Left = 437
+      Top = 16
+      Width = 3
+      Height = 15
+    end
     object cboStyle: TComboBox
       Left = 8
       Top = 10
@@ -34,8 +49,8 @@ object frmMain: TfrmMain
     end
   end
   object MainMenu1: TMainMenu
-    Left = 120
-    Top = 72
+    Left = 224
+    Top = 24
     object Cadastro1: TMenuItem
       Caption = 'Cadastros'
       object Clientes1: TMenuItem
@@ -53,6 +68,14 @@ object frmMain: TfrmMain
       object Financeiro1: TMenuItem
         Caption = 'Financeiro'
         OnClick = Financeiro1Click
+      end
+      object Empresa1: TMenuItem
+        Caption = 'Empresa'
+        OnClick = Empresa1Click
+      end
+      object ContaBancria1: TMenuItem
+        Caption = 'Conta Banc'#225'ria'
+        OnClick = ContaBancria1Click
       end
       object N1: TMenuItem
         Caption = '-'
@@ -84,6 +107,10 @@ object frmMain: TfrmMain
         OnClick = Vendas2Click
       end
     end
+    object Empresa2: TMenuItem
+      Caption = 'Empresa'
+      OnClick = Empresa2Click
+    end
   end
   object FDConnection1: TFDConnection
     Params.Strings = (
@@ -93,8 +120,8 @@ object frmMain: TfrmMain
       'User_Name=postgres'
       'DriverID=PG')
     LoginPrompt = False
-    Left = 272
-    Top = 56
+    Left = 304
+    Top = 24
   end
   object FDConnection2: TFDConnection
     ConnectionName = 'none'
@@ -105,7 +132,7 @@ object frmMain: TfrmMain
       'Server=localhost'
       'DriverID=PG')
     LoginPrompt = False
-    Left = 328
-    Top = 248
+    Left = 392
+    Top = 24
   end
 end

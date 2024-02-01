@@ -9,10 +9,10 @@ uses
   FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async, FireDAC.Phys,
   FireDAC.Phys.PG, FireDAC.Phys.PGDef, FireDAC.VCLUI.Wait, Data.DB,
   FireDAC.Comp.Client, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Themes, Vcl.Styles, IniFiles,
-  Vcl.Mask, UAppLibrary;
+  Vcl.Mask, UAppLibrary, UfrmDefault;
 
 type
-  TfrmMain = class(TForm)
+  TfrmMain = class(TfrmDefault)
     MainMenu1: TMainMenu;
     Cadastro1: TMenuItem;
     Clientes1: TMenuItem;
@@ -31,6 +31,11 @@ type
     Cliente1: TMenuItem;
     Vendas2: TMenuItem;
     Financeiro1: TMenuItem;
+    Empresa1: TMenuItem;
+    ContaBancria1: TMenuItem;
+    Empresa2: TMenuItem;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure Fechar1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure Clientes1Click(Sender: TObject);
@@ -42,11 +47,15 @@ type
     procedure Cliente1Click(Sender: TObject);
     procedure Vendas2Click(Sender: TObject);
     procedure Financeiro1Click(Sender: TObject);
+    procedure Empresa1Click(Sender: TObject);
+    procedure ContaBancria1Click(Sender: TObject);
+    procedure Empresa2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
 
   private
     { Private declarations }
   public
-    { Public declarations }
+    IdEmp: Integer;
   end;
 
 var
@@ -57,7 +66,8 @@ implementation
 {$R *.dfm}
 
 uses
-  UfrmCliManager, UfrmProdManager,  UfrmVndManager, UfrmCatManager, UfrmMntEstqManager, UfrmCliRel, UfrmVndRel, UfrmFilRel, UfrmFinManager;
+  UfrmCliManager, UfrmProdManager,  UfrmVndManager, UfrmCatManager, UfrmMntEstqManager,
+  UfrmCliRel, UfrmVndRel, UfrmFilRel, UfrmFinManager, UfrmEmpManager, UfrmConBancManager;
 
 procedure TfrmMain.Categorias1Click(Sender: TObject);
 begin
@@ -87,6 +97,39 @@ procedure TfrmMain.Clientes1Click(Sender: TObject);
 begin
   Application.CreateForm(TfrmCliManager, frmCliManager);
   frmCliManager.FormStyle := TFormStyle.fsMDIChild;
+end;
+
+procedure TfrmMain.ContaBancria1Click(Sender: TObject);
+begin
+  Application.CreateForm(TfrmConBancManager, frmConBancManager);
+  frmConBancManager.FormStyle := TFormStyle.fsMDIChild;
+end;
+
+procedure TfrmMain.Empresa1Click(Sender: TObject);
+begin
+  Application.CreateForm(TfrmEmpManager, frmEmpManager);
+  frmEmpManager.FormStyle := TFormStyle.fsMDIChild;
+end;
+
+procedure TfrmMain.Empresa2Click(Sender: TObject);
+
+var
+  Manager: TfrmEmpManager;
+  NomeEmp: String;
+begin
+  inherited;
+  try
+    Manager := TfrmEmpManager.Create(Application);
+
+    if (Manager.ShowModal = mrOk) then
+    begin
+      IdEmp          := Manager.qItem.FieldByName('id_emp').AsInteger;
+      NomeEmp        := Manager.qItem.FieldByName('nome').AsString;
+      Label2.Caption := NomeEmp;
+    end;
+  finally
+    FreeAndNil(Manager);
+  end;
 end;
 
 procedure TfrmMain.Fechar1Click(Sender: TObject);
@@ -126,6 +169,26 @@ begin
     cboStyle.ItemIndex := cboStyle.Items.IndexOf(StyleName);
   end;
 
+end;
+
+procedure TfrmMain.FormShow(Sender: TObject);
+var
+  Manager: TfrmEmpManager;
+  NomeEmp: String;
+begin
+inherited;
+  Manager := TfrmEmpManager.Create(Application);
+
+  if (Manager.ShowModal = mrOk) then
+  begin
+    IdEmp          := (Manager.qItem.FieldByName('id_emp').AsInteger);
+    NomeEmp        := (Manager.qItem.FieldByName('nome').AsString);
+    Label2.Caption := NomeEmp;
+  end
+  else
+  begin
+    Application.Terminate;
+  end;
 end;
 
 procedure TfrmMain.ManutenodeEstoque1Click(Sender: TObject);

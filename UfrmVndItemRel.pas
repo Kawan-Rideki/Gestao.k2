@@ -4,10 +4,10 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, Data.DB;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, RLReport, Data.DB, UfrmDefault;
 
 type
-  TfrmVndItemRel = class(TForm)
+  TfrmVndItemRel = class(TfrmDefault)
     RelVnd: TRLReport;
     RLBand1: TRLBand;
     RLSystemInfo1: TRLSystemInfo;
